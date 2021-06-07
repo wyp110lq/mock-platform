@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-config-addhs">
+			<div class="form-group">
+				<label class="col-sm-3 control-label required">服务名称：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="serviceName" id="serviceName"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label required">服务类型：</label>
+				<div class="col-sm-8">
+					<select name="serviceType" id="serviceType" class="form-control m-b">
+						<option value="Hessian" checked>Hessian</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label required">服务URI：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="serviceUri" id="serviceUri">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label required">接口代码：</label>
+				<div class="col-sm-8">
+					<textarea id="interfaceCode" name="interfaceCode" class="form-control" rows="15"></textarea>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div th:include="include::footer"></div>
+	<script type="text/javascript">
+		$("#form-config-addhs").validate({
+			rules:{
+				serviceName:{
+					required:true,
+					minlength: 2,
+					maxlength: 100
+				},
+				serviceUri:{
+					required:true,
+					minlength: 2,
+					maxlength: 200
+				},
+				interfaceCode:{
+					required:true,
+				}
+			}
+		});
+
+		function submitHandler() {
+	        if ($.validate.form()) {
+	        	add();
+	        }
+	    }
+
+		function add() {
+			var serviceName = $("input[name='serviceName']").val();
+			var serviceType = $("#serviceType option:selected").val();
+			var serviceUri = $("input[name='serviceUri']").val();
+			var interfaceCode = $("#interfaceCode").val();
+
+			$.modal.loading('正在处理');
+			$.ajax({
+				cache : true,
+				type : "POST",
+				url : ctx + "acsmock/config/createHessian",
+				data : {
+					"serviceName": serviceName,
+					"serviceType": serviceType,
+					"serviceUri": serviceUri,
+					"interfaceCode": interfaceCode
+				},
+				error : function(request) {
+					$.modal.closeLoading();
+					$.modal.alertError("系统错误");
+				},
+				success : function(data) {
+					$.modal.closeLoading();
+					$.operate.successCallback(data);
+				}
+			});
+		}
+	</script>
+</body>
+</html>

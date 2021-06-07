@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-config-addmq">
+			<div class="form-group">
+				<label class="col-sm-3 control-label required">MQ类型：</label>
+				<div class="col-sm-8">
+					<select name="mqType" id="mqType" class="form-control m-b">
+						<option value="RabbitMQ" checked>RabbitMQ</option>
+						<option value="RocketMQ">RocketMQ</option>
+						<option value="Kafka">Kafka</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label required">服务器IP：</label>
+				<div class="col-sm-3">
+					<input class="form-control" type="text" name="ip" id="ip"/>
+				</div>
+
+				<label class="col-sm-2 control-label required">服务器端口：</label>
+				<div class="col-sm-3">
+					<input class="form-control" type="text" name="port" id="port" value="5672"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">用户名：</label>
+				<div class="col-sm-3">
+					<input class="form-control" type="text" name="userName" id="userName"/>
+				</div>
+
+				<label class="col-sm-2 control-label">密码：</label>
+				<div class="col-sm-3">
+					<input class="form-control" type="text" name="password" id="password"/>
+				</div>
+			</div>
+			<div id="rabbitmqDiv" class="form-group">
+				<label class="col-sm-3 control-label required">队列名称：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="queueName" id="queueName"/>
+				</div>
+			</div>
+			<div id="rocketmqDiv" class="form-group" style="display: none">
+				<label class="col-sm-3 control-label required">Topic名称：</label>
+				<div class="col-sm-3">
+					<input class="form-control" type="text" name="topicName" id="topicName"/>
+				</div>
+
+				<label class="col-sm-2 control-label required">Tag名称：</label>
+				<div class="col-sm-3">
+					<input class="form-control" type="text" name="tagName" id="tagName"/>
+				</div>
+			</div>
+			<div id="kafkaDiv" class="form-group" style="display: none">
+				<label class="col-sm-3 control-label required">Topic名称：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="kafkaTopic" id="kafkaTopic"/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label required">消息内容：</label>
+				<div class="col-sm-8">
+					<textarea id="msg" name="msg" class="form-control" rows="12"></textarea>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div th:include="include::footer"></div>
+	<script type="text/javascript">
+		$("#form-config-addmq").validate({
+			rules:{
+				ip:{
+					required:true
+				},
+				port:{
+					required:true
+				},
+				mqType:{
+					required:true
+				},
+				msg:{
+					required:true
+				}
+			}
+		});
+
+		$("#mqType").change(function(){
+			var ss = $(this).children('option:selected').val();
+			if (ss == "RabbitMQ") {
+				$("#rabbitmqDiv").attr("style","display:block;");
+				$("#rocketmqDiv").attr("style","display:none;");
+				$("#kafkaDiv").attr("style","display:none;");
+
+				$("#port").val('5672');
+			} else if (ss == "RocketMQ") {
+				$("#rabbitmqDiv").attr("style","display:none;");
+				$("#rocketmqDiv").attr("style","display:block;");
+				$("#kafkaDiv").attr("style","display:none;");
+
+				$("#port").val('9876');
+			} else if (ss == "Kafka") {
+				$("#kafkaDiv").attr("style","display:block;");
+				$("#rabbitmqDiv").attr("style","display:none;");
+				$("#rocketmqDiv").attr("style","display:none;");
+
+				$("#port").val('9092');
+			}
+		});
+
+		function submitHandler() {
+	        if ($.validate.form()) {
+	        	add();
+	        }
+	    }
+
+		function add() {
+			var ip = $("#ip").val();
+			var port = $("#port").val();
+			var userName = $("#userName").val();
+			var password = $("#password").val();
+			var mqType = $("#mqType option:selected").val();
+			var queueName = $("#queueName").val();
+			var topicName = $("#topicName").val();
+			var tagName = $("#tagName").val();
+			var kafkaTopic = $("#kafkaTopic").val();
+			var msg = $("#msg").val();
+
+			$.modal.loading('正在处理');
+			$.ajax({
+				type : "POST",
+				url : ctx + "acsmock/config/sendMq",
+				data : {
+					"ip": ip,
+					"port": port,
+					"userName": userName,
+					"password": password,
+					"mqType": mqType,
+					"queueName": queueName,
+					"topicName": topicName,
+					"tagName": tagName,
+					"kafkaTopic": kafkaTopic,
+					"msg": msg
+				},
+				error : function(request) {
+					$.modal.closeLoading();
+					$.modal.alertError("系统错误");
+				},
+				success : function(data) {
+					$.modal.closeLoading();
+					$.operate.successCallback(data);
+				}
+			});
+		}
+	</script>
+</body>
+</html>

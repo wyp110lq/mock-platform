@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<form class="form-horizontal m" id="form-config-edit" th:object="${mockConfig}">
+		<input id="id" name="id" type="hidden" th:field="*{id}"/>
+		<div class="form-group">
+			<label class="col-sm-2 control-label required">服务名称：</label>
+			<div class="col-sm-9">
+				<input class="form-control" type="text" name="serviceName" id="serviceName" th:field="*{serviceName}"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label required">服务类型：</label>
+			<div class="col-sm-2">
+				<select name="serviceType" id="serviceType" class="form-control m-b">
+					<option value="Http" th:field="*{serviceType}">Http</option>
+					<option value="WebService" th:field="*{serviceType}">WebService</option>
+					<option value="Hessian" th:field="*{serviceType}">Hessian</option>
+				</select>
+			</div>
+
+			<label class="col-sm-1 control-label">请求方式</label>
+			<div class="col-sm-2">
+				<select name="reqMethod" id="reqMethod" class="form-control m-b">
+					<option value="" th:field="*{reqMethod}">不限</option>
+					<option value="GET" th:field="*{reqMethod}">GET</option>
+					<option value="POST" th:field="*{reqMethod}">POST</option>
+					<option value="PUT" th:field="*{reqMethod}">PUT</option>
+					<option value="DELETE" th:field="*{reqMethod}">DELETE</option>
+				</select>
+			</div>
+
+			<label class="col-sm-2 control-label">参数类型：</label>
+			<div class="col-sm-2">
+				<select name="reqMethod" id="reqContentType" class="form-control m-b">
+					<option value="" th:field="*{reqContentType}">不限</option>
+					<option value="form-data" th:field="*{reqContentType}">form-data</option>
+					<option value="JSON" th:field="*{reqContentType}">JSON(application/json)</option>
+					<option value="XML" th:field="*{reqContentType}">XML(application/xml)</option>
+					<option value="Text" th:field="*{reqContentType}">Text(text/plain)</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label required">服务URI：</label>
+			<div class="col-sm-9">
+				<input class="form-control" type="text" name="serviceUri" id="serviceUri" th:field="*{serviceUri}">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">返回类型：</label>
+			<div class="col-sm-2">
+				<select name="resContentType" id="resContentType" class="form-control m-b">
+					<option value="JSON" th:field="*{resContentType}">JSON</option>
+					<option value="XML" th:field="*{resContentType}">XML</option>
+					<option value="Text" th:field="*{resContentType}">Text</option>
+				</select>
+			</div>
+
+			<label class="col-sm-1 control-label">返回状态</label>
+			<div class="col-sm-2">
+				<select name="resStatus" id="resStatus" class="form-control m-b">
+					<option value="200" th:field="*{resStatus}">200</option>
+					<option value="404" th:field="*{resStatus}">404</option>
+					<option value="500" th:field="*{resStatus}">500</option>
+				</select>
+			</div>
+
+			<label class="col-sm-2 control-label">服务耗时(秒)</label>
+			<div class="col-sm-2">
+				<input class="form-control" type="text" name="serviceTime" id="serviceTime" th:field="*{serviceTime}"/>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">返回结果：</label>
+			<div class="col-sm-9">
+				<textarea class="form-control" type="text" id="resResult" name="resResult" th:field="*{resResult}" rows="12"/>
+			</div>
+		</div>
+	</form>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+	$("#form-config-edit").validate({
+		rules:{
+			serviceName:{
+				required:true,
+				minlength: 2,
+				maxlength: 100
+			},
+			serviceUri:{
+				required:true,
+				minlength: 2,
+				maxlength: 200
+			}
+		}
+	});
+
+	$(document).ready(function(){
+		$('#serviceType').attr("disabled","disabled");
+		var serviceType = $("#serviceType option:selected").val();
+		if(serviceType != 'Http') {
+			disableFormItems();
+		}
+
+		var resContentType = $("#resContentType option:selected").val();
+		if(resContentType == 'JSON') {
+			//json格式化显示
+			var text = $("#resResult").val();
+			if(text && text != '') {
+				var jsonPretty = JSON.stringify(JSON.parse(text),null,2);
+				$("#resResult").val(jsonPretty);
+			}
+		}
+	});
+
+	function disableFormItems() {
+		$('#reqMethod').attr("disabled","disabled");
+		$('#reqContentType').attr("disabled","disabled");
+		$('#resContentType').attr("disabled","disabled");
+		$('#resStatus').attr("disabled","disabled");
+	}
+
+	function submitHandler() {
+		if ($.validate.form()) {
+			edit();
+		}
+	}
+
+	function edit() {
+		var id = $("input[name='id']").val();
+		var serviceName = $("input[name='serviceName']").val();
+		var serviceType = $("#serviceType option:selected").val();
+		var reqMethod = $("#reqMethod option:selected").val();
+		var serviceUri = $("input[name='serviceUri']").val();
+		var reqContentType = $("#reqContentType option:selected").val();
+		var resContentType = $("#resContentType option:selected").val();
+		var resStatus = $("#resStatus option:selected").val();
+		var resResult = $("#resResult").val();
+		var serviceTime = $("#serviceTime").val()=='' ? 0 : $("#serviceTime").val();
+
+		$.modal.loading('正在处理');
+		$.ajax({
+			type : "POST",
+			url : ctx + "acsmock/config/save",
+			data : {
+				"id": id,
+				"serviceName": serviceName,
+				"serviceType": serviceType,
+				"reqMethod": reqMethod,
+				"serviceUri": serviceUri,
+				"resStatus": resStatus,
+				"reqContentType": reqContentType,
+				"resContentType": resContentType,
+				"resResult": resResult,
+				"serviceTime": serviceTime
+			},
+			error : function(request) {
+				$.modal.closeLoading();
+				$.modal.alertError("系统错误");
+			},
+			success : function(data) {
+				$.modal.closeLoading();
+				$.operate.successCallback(data);
+			}
+		});
+	}
+</script>
+</body>
+</html>

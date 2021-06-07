@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="role-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            服务名称：<input type="text" name="serviceName"/>
+                        </li>
+                        <li>
+                            服务URI：<input type="text" name="serviceUri"/>
+                        </li>
+
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()">
+                <i class="fa fa-plus"></i> 新增Http服务
+            </a>
+            <a class="btn btn-success" onclick="$.operate.addWebService()">
+                <i class="fa fa-plus"></i> 新增WebService服务
+            </a>
+            <a class="btn btn-success" onclick="$.operate.addHessian()">
+                <i class="fa fa-plus"></i> 新增Hessian服务
+            </a>
+            <a class="btn btn-success" onclick="$.operate.sendMq()">
+                <i class="fa fa-plus"></i> 发送MQ消息
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" data-mobile-responsive="true"></table>
+        </div>
+    </div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+    var prefix = ctx + "acsmock/config";
+
+    $(function() {
+        var options = {
+            url: prefix + "/listPage",
+            createUrl: prefix + "/toAdd",
+            updateUrl: prefix + "/toEdit/{id}",
+            removeUrl: prefix + "/delete/{id}",
+            createWsUrl: prefix + "/toWsAdd",
+            createHsUrl: prefix + "/toHsAdd",
+            createMqUrl: prefix + "/toMqAdd",
+            modalName: "服务配置",
+            search: false,
+            showSearch: false,
+            showRefresh: false,
+            showColumns: false,
+            showToggle: false,
+            showExport: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'serviceName',
+                    title: '服务名称',
+                    sortable: false
+                },
+                {
+                    field: 'serviceType',
+                    title: '服务类型',
+                    sortable: false
+                },
+                {
+                    field: 'serviceUri',
+                    title: '服务URI',
+                    sortable: false,
+                    formatter: function(value, row, index) {
+                        if(row.reqMethod && row.reqMethod != 'GET') {
+                            return value;
+                        }
+                        return '<a href="'+value+'" target="_blank">' + value + '</a>';
+                    }
+                },
+                {
+                    field: 'reqMethod',
+                    title: '请求方式',
+                    sortable: false,
+                    formatter: function(value, row, index) {
+                        if(!value || value == '') return '不限';
+                        return value;
+                    }
+                },
+                {
+                    field: 'reqContentType',
+                    title: '参数类型',
+                    sortable: false,
+                    formatter: function(value, row, index) {
+                        if(!value || value == '') return '不限';
+                        return value;
+                    }
+                },
+                {
+                    field: 'resContentType',
+                    title: '返回类型',
+                    sortable: false
+                },
+                {
+                    field: 'resStatus',
+                    title: '返回状态',
+                    sortable: false
+                },
+                {
+                    field: 'serviceTime',
+                    title: '服务耗时（秒）',
+                    sortable: false
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs" href="#" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs" href="#" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

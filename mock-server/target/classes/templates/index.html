@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>ACS-Mock平台</title>
+    <meta name="keywords" content="Mock">
+    <meta name="description" content="Mock">
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html"/>
+    <![endif]-->
+    <link th:href="@{favicon.ico}" rel="stylesheet"/>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/animate.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/mockpt/css/ry-ui.css?v=3.1.0}" rel="stylesheet"/>
+    <style type="text/css">
+        .nav > li:hover .dropdown-menu {display: block;}
+        #content-main.max { height: calc(100% - 110px); overflow: hidden; width: 100%; height: 100%; left: 0px; position: absolute; top: 0px; z-index: 9998; margin: 0; }
+    </style>
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg mini-navbar" style="overflow: hidden">
+<div id="wrapper">
+    <!--左侧导航开始-->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="nav-close">
+            <i class="fa fa-times-circle"></i>
+        </div>
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="active">
+                    <a href="#">
+                        <i class="fa fa fa-tasks"></i>
+                        <span class="nav-label" th:text="服务管理">服务管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!--左侧导航结束-->
+
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+        <div class="row content-tabs">
+            <nav class="page-tabs menuTabs">
+                <div class="page-tabs-content">
+                    <a href="javascript:;" class="active menuTab" data-id="/system/main">服务管理</a>
+                </div>
+            </nav>
+            <a href="#" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
+        </div>
+
+        <div class="row mainContent" id="content-main">
+            <iframe class="mockpt_iframe" name="iframe0" width="100%" height="100%" data-id="/system/main"
+                    th:src="@{/acsmock/config/toList}" frameborder="0" seamless></iframe>
+        </div>
+    </div>
+    <!--右侧部分结束-->
+</div>
+<!-- 全局js -->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script src="http://tajs.qq.com/stats?sId=62048022"></script>
+<script th:src="@{/mockpt/js/ry-ui.js?v=3.1.0}"></script>
+<script th:src="@{/mockpt/index.js}"></script>
+<script th:src="@{/ajax/libs/fullscreen/jquery.fullscreen.js}"></script>
+
+</body>
+</html>

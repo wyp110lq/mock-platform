@@ -1,0 +1,48 @@
+server:
+  port: 10110
+
+mockpt:
+  version: 1.0.0
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: mock-platform
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@127.0.0.1:1521/ORCL
+    username: acstruck
+    password: acstruck
+    default-auto-commit: true
+    auto-commit: true
+    maximum-pool-size: 100
+    max-wait: 10000
+    min-idle: 5
+    initial-size: 5
+    validation-query: SELECT 1
+    test-on-borrow: false
+    test-while-idle: true
+    time-between-eviction-runs-millis: 18800
+    minEvictableIdleTimeMillis: 300000
+    allow-bean-definition-overriding: true
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+mock:
+  exclude:
+    uri: /favicon.ico,/acsmock,/acsmock/.*,/ajax/.*,/css/.*,/fonts/.*,/img/.*,/js/.*,/mockpt/.*
+  lib:
+    path: D:\\dev\\mock\\lib
+  webservice:
+    srcpath: D:\\dev\\mock\\webservice\\src
+    classpath: D:\\dev\\mock\\webservice\\classes
+    package: com.yss.acs.mock.webservice
+    javascript: D:\\dev\\mock\\code_create.bat
+    classscript: D:\\dev\\mock\\code_compile.bat
+  hessian:
+    package: com.yss.acs.mock.hessian
+
