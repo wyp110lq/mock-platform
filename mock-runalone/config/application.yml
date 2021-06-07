@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@192.168.7.130:1521/ORCL
+    username: mock
+    password: mock
+
+mock:
+  exclude:
+    uri: /favicon.ico,/acsmock,/acsmock/.*,/ajax/.*,/css/.*,/fonts/.*,/img/.*,/js/.*,/mockpt/.*,/paramValidConfig,/paramValidConfig/.*
+  lib:
+    path: /home/mock/lib
+  webservice:
+    srcpath: /home/mock/webservice/src
+    classpath: /home/mock/webservice/classes
+    package: com.yss.acs.mock.webservice
+    javascript: /home/mock/code_create.sh
+    classscript: /home/mock/code_compile.sh
+  hessian:
+    package: com.yss.acs.mock.hessian
